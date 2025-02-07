@@ -1,0 +1,28 @@
+.container_welcome {
+    width: 80%;
+    height: auto;
+    padding: 50px;
+    display: flex;
+    border-radius: 20px;
+    justify-content: space-between;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    gap: 50px;
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.image {
+    width: 350px;
+    height:350px;
+    object-fit: cover;
+    border-radius: 48% 13% 34% 16% / 25% 22% 48% 32%;
+}

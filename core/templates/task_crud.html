@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Lista de Tareas</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+            .task {
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            .task h3 {
+                margin: 0;
+            }
+            .task p {
+                margin: 5px 0;
+            }
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    </head>
+    <body>
+        <h1>Lista de Tareas</h1>
+
+        <!-- Formulario para crear una tarea -->
+        <div>
+            <h2>Crear Nueva Tarea</h2>
+            <input type="text" id="title" placeholder="Título" />
+            <input type="text" id="description" placeholder="Descripción" />
+            <button onclick="createTask()">Crear Tarea</button>
+        </div>
+
+        <!-- Lista de tareas -->
+        <div id="task-list">
+            <!-- Las tareas se cargarán aquí dinámicamente -->
+        </div>
+
+        <script>
+            // URL base de la API
+            const API_URL = "/api/core/task/";
+
+            // Función para cargar y mostrar las tareas
+            async function loadTasks() {
+                try {
+                    const tasks = await axios.get(API_URL);
+                    const taskList = document.getElementById("task-list");
+                    taskList.innerHTML = "";
+
+                    tasks.data.forEach((task) => {
+                        const taskElement = document.createElement("div");
+                        taskElement.className = "task";
+                        taskElement.innerHTML = `
+                    <h3>${task.title}</h3>
+                    <p>${task.description}</p>
+                    <p>${task.completed}</p>
+                    <button onclick="deleteTask(${task.id})">Eliminar</button>
+                    <button onclick="editTask(${task.id})">Editar</button>
+                `;
+                        taskList.appendChild(taskElement);
+                    });
+                } catch {
+                    alert(
+                        "Hubo un error al cargar las tareas. Por favor, intenta de nuevo."
+                    );
+                }
+            }
+
+            // // Función para crear una tarea
+            // async function createTask() {
+            //   const title = document.getElementById("title").value;
+            //   const description = document.getElementById("description").value;
+
+            //   const response = await fetch(API_URL, {
+            //     method: "POST",
+            //     headers: {
+            //       "Content-Type": "application/json",
+            //     },
+            //     body: JSON.stringify({ title, description }),
+            //   });
+
+            //   if (response.ok) {
+            //     loadTasks(); // Recargar la lista de tareas
+            //   }
+            // }
+
+            // Función para crear una tarea
+            async function createTask() {
+                const title = document.getElementById("title").value;
+                const description =
+                    document.getElementById("description").value;
+
+                try {
+                    const response = await axios.post(API_URL, {
+                        title: title,
+                        description: description,
+                    });
+
+                    if (response.status === 201) {
+                        // 201 significa "Created" en HTTP
+                        alert("Tarea creada correctamente.");
+                        loadTasks(); // Recargar la lista de tareas
+                    }
+                } catch (error) {
+                    console.error("Error al crear la tarea:", error);
+                    alert(
+                        "Hubo un error al crear la tarea. Por favor, intenta de nuevo."
+                    );
+                }
+            }
+
+            // Función para eliminar una tarea
+            async function deleteTask(taskId) {
+                const response = await fetch(`${API_URL}${taskId}/`, {
+                    method: "DELETE",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}", // Token CSRF para protección
+                    },
+                });
+
+                if (response.ok) {
+                    loadTasks(); // Recargar la lista de tareas
+                }
+            }
+
+            // Función para editar una tarea
+            async function editTask(taskId) {
+                const newTitle = prompt("Ingresa el nuevo título:");
+                const newDescription = prompt("Ingresa la nueva descripción:");
+
+                const response = await fetch(`${API_URL}${taskId}/`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}", // Token CSRF para protección
+                    },
+                    body: JSON.stringify({
+                        title: newTitle,
+                        description: newDescription,
+                    }),
+                });
+
+                if (response.ok) {
+                    loadTasks(); // Recargar la lista de tareas
+                }
+            }
+
+            // Cargar las tareas al iniciar la página
+            loadTasks();
+        </script>
+    </body>
+</html>
