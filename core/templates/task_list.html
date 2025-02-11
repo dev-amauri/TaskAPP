@@ -1,107 +1,115 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Task</title>
-        <link rel="stylesheet" href="./static/task_list.css" />
-        <link rel="stylesheet" href="./static/globals.css" />
+{% extends 'base.html' %}
 
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    </head>
-        <!-- get axios and dinamic table -->
-        <script>
-            // get
-            const API_URL = "/api/core/task/";
-            async function getTask() {
-                try {
-                    const response = await axios.get(API_URL);
-                    const taskList = response.data;
-                    createTable(taskList);
-                } catch {
-                    alert("Hubo un error mano");
-                }
-            }
-            //table
-            const createTable = (taskList) => {
-                const tableContainer = document.getElementById("table-task");
-                const rows = taskList
-                    .map((index) => {
-                        return `
-                    <tr>
-                        <td class="td-id">${index.id}</td>
-                        <td>${index.title}</td>
-                        <td>${index.subtitle}</td>
-                        <td>${index.completed ? "✅" : "❌"}</td>
-                        <td class='td-options'>
-                            <div class='button-container'>
-                                <button class='button-edit' onclick='handleEdit(${index.id})' > Editar </button>
-                                <button class='button-error' onclick='handleDelete(${index.id})'> Eliminar </button>
-                                <button class='button-status' onclick='handleChangeStatus(${index.id}, ${index.completed} )'> ${index.completed ? "Desactivar" : "Re-activar"} </button>
-                            </div>
-                        </td>
-                    </tr>`;
-                    })
-                    .join("");
+{% block title %}Tareas{% endblock %}
 
-                const tableConfig = `<table>
-                    <thead>
-                        <tr>
-                            <td class="td-id"> ID </td>
-                            <td> Nombre </td>
-                            <td> Objetivo </td>
-                            <td> Estatus </td>
-                            <td class='td-options'> Opciones </td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${rows}
-                    </tbody>
-                </table>`;
+{% block stylesheet %}
+<link rel="stylesheet" href="./static/task_list.css" />
+{% endblock %}
 
-                tableContainer.innerHTML = tableConfig;
-            };
+{% block content %}
+<!-- get axios and dinamic table -->
+<script>
+    // get
+    const API_URL = "/api/core/task/";
+    async function getTask() {
+        try {
+            const response = await axios.get(API_URL);
+            const taskList = response.data;
+            createTable(taskList);
+        } catch {
+            alert("Hubo un error mano");
+        }
+    }
+    //table
+    const createTable = (taskList) => {
+        const tableContainer = document.getElementById("table-task");
+        const rows = taskList
+            .map((index) => {
+                return `
+            <tr>
+                <td class="td-id">${index.id}</td>
+                <td>${index.title}</td>
+                <td>${index.subtitle}</td>
+                <td>${index.completed ? "✅" : "❌"}</td>
+                <td class='td-options'>
+                    <div class='button-container'>
+                        <button class='button-edit' onclick='handleEdit(${
+                            index.id
+                        })' > Editar </button>
+                        <button class='button-error' onclick='handleDelete(${
+                            index.id
+                        })'> Eliminar </button>
+                        <button class='button-status' onclick='handleChangeStatus(${
+                            index.id
+                        }, ${index.completed} )'> ${
+                    index.completed ? "Desactivar" : "Re-activar"
+                } </button>
+                    </div>
+                </td>
+            </tr>`;
+            })
+            .join("");
 
-            const handleEdit = (id) =>{
-                window.location.href = `/tasks/details/${id}`;
-            }
+        const tableConfig = `<table>
+            <thead>
+                <tr>
+                    <td class="td-id"> ID </td>
+                    <td> Nombre </td>
+                    <td> Objetivo </td>
+                    <td> Estatus </td>
+                    <td class='td-options'> Opciones </td>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows}
+            </tbody>
+        </table>`;
 
-            const handleDelete = async (id) => {
-                try{
-                    await axios.delete(`${API_URL}${id}/`)
-                    getTask();
-                }catch{
-                    alert("Error al eliminar tarea.")
-                }
-            }
+        tableContainer.innerHTML = tableConfig;
+    };
 
-            const handleChangeStatus = async (id, completed) => {
-                try {
-                    await axios.patch(`${API_URL}${id}/`, { completed: !completed });
-                    getTask();
-                } catch {
-                    alert ("Error al actualizar estado.");
-                }
-            }
+    const handleEdit = (id) => {
+        window.location.href = `/tasks/details/${id}`;
+    };
 
-
-            const goBack = () => {
-                history.back();
-            }
-
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`${API_URL}${id}/`);
             getTask();
-        </script>
-        <div class="container">
-            <div>
-                <button onClick="goBack()" class="button-back"> ⬅ Regresar </button>
-            </div>
-            <div class="container-header">
-                <h1 class="title">Lista de Tareas</h1>
-                <button class="button-create" onclick="window.location.href='/tasks/details'" >Crear Tarea</button>
-            </div>
+        } catch {
+            alert("Error al eliminar tarea.");
+        }
+    };
 
-            <div id="table-task"></div>
-        </div>
-    </body>
-</html>
+    const handleChangeStatus = async (id, completed) => {
+        try {
+            await axios.patch(`${API_URL}${id}/`, { completed: !completed });
+            getTask();
+        } catch {
+            alert("Error al actualizar estado.");
+        }
+    };
+
+    const goBack = () => {
+        history.back();
+    };
+
+    getTask();
+</script>
+<div class="container">
+    <div>
+        <button onClick="goBack()" class="button-back">⬅ Regresar</button>
+    </div>
+    <div class="container-header">
+        <h1 class="title">Lista de Tareas</h1>
+        <button
+            class="button-create"
+            onclick="window.location.href='/tasks/details'"
+        >
+            Crear Tarea
+        </button>
+    </div>
+
+    <div id="table-task"></div>
+</div>
+{% endblock %}

@@ -12,10 +12,32 @@ html {
 }
 
 body {
-    height: 100%;
-    padding: 50px;
     display: flex;
+    justify-content:space-between;
+    width: 100%;
+    margin: auto;
+}
+
+.navbar {
+    width: 200px;
+    height: max-content;
+    min-height: 96.6vh;
+    padding: 15px;
+    background-color: var(--color-primary);
+    color: white;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+}
+
+.content {
+    display: flex;
+    width: 100%;
+    height: min-content;
     justify-content: center;
+    padding: 50px;
 }
 
 button {
@@ -30,11 +52,10 @@ button:hover {
     background-color: #00000021;
 }
 
-/* animation pop */
+/* animación pop */
 button:active {
     transform: scale(0.95);
 }
-
 
 @keyframes pop {
     0% {

@@ -1,103 +1,101 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Detalles de la Tarea</title>
-        <link rel="stylesheet" href="{% static 'details_task.css' %}" />
-        <link rel="stylesheet" href="{% static 'globals.css' %}" />
 
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    </head>
-    <body>
-        <script>
-            //post
-            const API_URL = '/api/core/task/';
-            const taskId = "{{ task.id }}";
+{% block title %}Home{% endblock %}
 
-            async function postTask(formData) {
-                try{
-                    await axios.post(API_URL, formData)
-                    window.location.href = "/tasks";
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'details_task.css' %}" />
+<link rel="stylesheet" href="{% static 'globals.css' %}" />
 
-                } catch{
-                    alert('Hubo un error al crear la tarea')
-                }
-            }
+{% endblock %}
 
-            // patch
-            async function patchTask(formData) {
-                try{
-                    await axios.patch(`${API_URL}${taskId}/`, formData)
-                    history.back();
+{% block content %}
+<script>
+    //post
+    const API_URL = '/api/core/task/';
+    const taskId = "{{ task.id }}";
 
-                } catch{
-                    alert('Hubo un error al editar la tarea')
-                }
-            }
+    async function postTask(formData) {
+        try{
+            await axios.post(API_URL, formData)
+            window.location.href = "/tasks";
 
-            // onSubmit
-            async function onSubmit(event) {
-                event.preventDefault();
-                const formData = new FormData(event.target);
-                if(taskId) {
-                    await patchTask(formData)
-                } else {
-                    await postTask(formData)
-                }
-            }
-            // goback
-            const goBack = () => {
-                history.back();
-            }
-        </script>
-        <div class="container">
-            <div>
-                <button onClick="goBack()" class="button-back"> ⬅ Regresar </button>
+        } catch{
+            alert('Hubo un error al crear la tarea')
+        }
+    }
+
+    // patch
+    async function patchTask(formData) {
+        try{
+            await axios.patch(`${API_URL}${taskId}/`, formData)
+            window.location.href = "/tasks";
+
+        } catch{
+            alert('Hubo un error al editar la tarea')
+        }
+    }
+
+    // onSubmit
+    async function onSubmit(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        if(taskId) {
+            await patchTask(formData)
+        } else {
+            await postTask(formData)
+        }
+    }
+    // goback
+    const goBack = () => {
+        history.back();
+    }
+</script>
+<div class="container">
+    <div>
+        <button onClick="goBack()" class="button-back"> ⬅ Regresar </button>
+    </div>
+    <h1>Detalles de la Tarea</h1>
+
+    <div class="container-form">
+        <form onsubmit="onSubmit(event)">
+            <div class="form-top">
+                <div class="textfield">
+                    <label for="ftitle">Nombre de la tarea</label>
+                    <input
+                        type="text"
+                        id="ltitle"
+                        name="title"
+                        placeholder="Nombre de la tarea"
+                        {% if task %} value="{{ task.title }}" {% else %} value="" {% endif %}
+                    />
+                </div>
+
+                <div class="textfield">
+                    <label for="fname">Objetivo</label>
+                    <input
+                        type="text"
+                        id="lsubtitle"
+                        name="subtitle"
+                        placeholder="Objetivo"
+                        {% if task %} value="{{ task.subtitle }}" {% else %} value="" {% endif %}
+                    />
+                </div>
             </div>
-            <h1>Detalles de la Tarea</h1>
 
-            <div class="container-form">
-                <form onsubmit="onSubmit(event)">
-                    <div class="form-top">
-                        <div class="textfield">
-                            <label for="ftitle">Nombre de la tarea</label>
-                            <input
-                                type="text"
-                                id="ltitle"
-                                name="title"
-                                placeholder="Nombre de la tarea"
-                                {% if task %} value="{{ task.title }}" {% else %} value="" {% endif %}
-                            />
-                        </div>
-
-                        <div class="textfield">
-                            <label for="fname">Objetivo</label>
-                            <input
-                                type="text"
-                                id="lsubtitle"
-                                name="subtitle"
-                                placeholder="Objetivo"
-                                {% if task %} value="{{ task.subtitle }}" {% else %} value="" {% endif %}
-                            />
-                        </div>
-                    </div>
-
-                    <div class="full-textfield">
-                        <label for="fdescription">Descripción</label>
-                        <textarea
-                            id="txdescription"
-                            name="description"
-                            rows="4"
-                            cols="50"
-                            placeholder="Descripción">{% if task %}{{ task.description }}{% endif %}</textarea>
-                    </div>
-                    <button type="submit">
-                        {% if task %} Editar tarea {% else %} Crear Tarea {% endif %}
-                    </button>
-                </form>
+            <div class="full-textfield">
+                <label for="fdescription">Descripción</label>
+                <textarea
+                    id="txdescription"
+                    name="description"
+                    rows="4"
+                    cols="50"
+                    placeholder="Descripción">{% if task %}{{ task.description }}{% endif %}</textarea>
             </div>
-        </div>
-    </body>
-</html>
+            <button type="submit">
+                {% if task %} Editar tarea {% else %} Crear Tarea {% endif %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./static/globals.css" />
+    {% block stylesheet %}{% endblock %}
+
+    <style>
+        .button-navbar {
+            width: 100%;
+            border-radius: 0px !important;
+            color: white;
+            font-size: 1.1rem;
+            background-color: transparent;
+            border: transparent;
+            text-align: left;
+        }
+
+    </style>
+    <title>{% block title %}Home{% endblock %}</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+    <div class="navbar">
+        <img src="https://www.shutterstock.com/image-vector/gym-fitness-logo-icon-blue-260nw-1606763350.jpg" alt="logo gym" style="width: 90%; height: 70px; object-fit: cover; border-radius: 10px;"/>
+
+        <div>
+            <button class="button-navbar" onclick="window.location.href=''"> Inicio</button>
+            <button class="button-navbar" onclick="window.location.href='/tasks'"> Tereas</button>
+            <button class="button-navbar" onclick="window.location.href='/tasks/details'"> Crear tarea</button>
+        </div>
+
+    </div>
+
+    <!-- content children -->
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
